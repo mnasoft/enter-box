@@ -5,6 +5,12 @@
 ;;; "enter-box" goes here. Hacks and glory await!
 
 (defparameter *dim-type* '(("pressure" ("MPa" "kPa" "Pa" "kgf/mm2" "kgf/cm2" "kgf/m2" "mm_Hg" "mm_H2O"))
+			   ("length"   ("Mm" "km" "m" "mm" ) )
+			   ("force"    ("MN" "kN" "N" "tf" "kgf" "gf") )))
+(vd* 1000000 |Pa|)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defparameter *dim-type* '(("pressure" ("MPa" "kPa" "Pa" "kgf/mm2" "kgf/cm2" "kgf/m2" "mm_Hg" "mm_H2O"))
 			   ("length" ("Mm" "km" "m" "mm" ) )
 			   ("force"  ("MN" "kN" "N" "tf" "kgf" "gf") )))
 
@@ -38,8 +44,8 @@
 
 (defun cmd-pack-items (widgets)
   (mapcar
-   #'(lambda (st w)
-       (when st (pack w :side :left :padx 5 :pady 5)))
+   #'(lambda (st wgt)
+       (when st (pack wgt :side :left :padx 5 :pady 5)))
    (calc-state (first *eb-state*))
    widgets))
 
