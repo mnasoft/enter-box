@@ -4,7 +4,7 @@
 
 ;;; "enter-box" goes here. Hacks and glory await!
 
-(defparameter *dim-type* '(("pressure" ("MPa" "kPa" "Pa" "kgf/mm2" "kgf/cm2" "kgf/m2" "mm_Hg" "mm_H2O"))
+(defparameter *dim-type* '(("pressure" ("MPa" "kPa" "Pa" "kgf/mm^2" "kgf/cm^2" "kgf/m^2" "mm_Hg" "mm_H2O"))
 			   ("length"   ("Mm" "km" "m" "mm" ) )
 			   ("force"    ("MN" "kN" "N" "tf" "kgf" "gf") )))
 (vd* 1000000 |Pa|)
@@ -69,9 +69,9 @@
 	     (b->   (make-instance 'button     :master frame :text ">"    :width 2 :command (lambda () (format t "~&>~&"))))
 	     (b-ok  (make-instance 'button     :master frame :text "Ok"   :width 3
 				   :command (lambda ()
-					      (setf rez (format nil "~&~A~&" (text eb)))
-					      (setf *exit-mainloop* t)
-					      ))))
+					      (setf rez (vd* (read-from-string (text eb))(dimensionp (text dm-cb))))
+;;;;					      (setf rez (format nil "~&~A~A~&" (text eb) (text dm-cb)))
+					      (setf *exit-mainloop* t)))))
 	(bind  b-< "<ButtonRelease-1>"
 	       (lambda (evt)
 		 (pack-forget-all frame)
@@ -91,3 +91,4 @@
     rez))
 
 (edit-box)
+
