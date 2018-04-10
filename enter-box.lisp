@@ -4,10 +4,16 @@
 
 ;;; "enter-box" goes here. Hacks and glory await!
 
-(defparameter *dim-type* '(("pressure" ("MPa" "kPa" "Pa" "kgf/mm^2" "kgf/cm^2" "kgf/m^2" "mm_Hg" "mm_H2O"))
-			   ("length"   ("Mm" "km" "m" "mm" ) )
-			   ("force"    ("MN" "kN" "N" "tf" "kgf" "gf") )))
-(vd* 1000000 |Pa|)
+
+
+(defparameter *dim-type*
+  (mapcar
+   #'(lambda (el)
+       (list el (dim-string-by-dim-name el)))
+   (dim-name-list)))
+
+
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defparameter *dim-type* '(("pressure" ("MPa" "kPa" "Pa" "kgf/mm2" "kgf/cm2" "kgf/m2" "mm_Hg" "mm_H2O"))
@@ -57,7 +63,7 @@
     (with-ltk ()
       (let* ((frame (make-instance 'frame))
 	     (b-<   (make-instance 'button     :master frame :text "<" :width 2))
-             (vt-cb (make-instance 'combobox   :master frame :width 8
+             (vt-cb (make-instance 'combobox   :master frame :width 25
 				   :text (first val-type) :values val-type))
 	     (t-lb  (make-instance 'label      :master frame :text "Label" )) ;;;; t-lb
 
