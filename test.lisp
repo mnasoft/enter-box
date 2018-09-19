@@ -2,6 +2,11 @@
 
 (in-package #:enter-box)
 
+(edit-box :l-edit-text 25.4 :state 2)
+
+(e-box-demo-2)
+
+
 (edit-box)
 
 (enter-box:edit-box)

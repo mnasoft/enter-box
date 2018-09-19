@@ -55,7 +55,7 @@
    (l-edit :accessor e-box-l-edit :initform nil :documentation "Line edit widget")
    (dm-cb  :accessor e-box-dm-cb  :initform nil)
    (b->    :accessor e-box-b->    :initform nil
-	   :documentation "Кнопка вызывает увеличение количества отображаемых виджетов класса e-box"))))
+	   :documentation "Кнопка вызывает увеличение количества отображаемых виджетов класса e-box")))
 
 (defmethod initialize-instance :after ((e-box e-box) &key (l-edit-text 20.0) (label "Label" ))
   (let* ((val-type (mapcar #'first *dim-type*)))
@@ -136,10 +136,3 @@
       (pack p-out :side :top)
       (pack dp    :side :top)))
   *e-box-rez*)
-
-(edit-box :l-edit-text 25.4 :state 2)
- (e-box-demo-2)
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-
