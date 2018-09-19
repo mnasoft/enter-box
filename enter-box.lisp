@@ -57,17 +57,18 @@
    (b->    :accessor e-box-b->    :initform nil
 	   :documentation "Кнопка вызывает увеличение количества отображаемых виджетов класса e-box")))
 
-(defmethod initialize-instance :after ((e-box e-box) &key (l-edit-text 20.0) (label "Label" ))
+(defmethod initialize-instance :after ((e-box e-box) &key (l-edit-text 20.0) (label "Label" ) vtype )
   (let* ((val-type (mapcar #'first *dim-type*)))
+    (unless (member vtype val-type :test #'equal) (setf vtype (first val-type)))
     (setf
      (e-box-b-<   e-box) (make-instance 'button     :master e-box :text "<" :width 2)
      (e-box-vt-cb e-box) (make-instance 'combobox   :master e-box :width 25
-					:text (first val-type) :values val-type)
+					:text vtype :values val-type)
      (e-box-t-lb   e-box) (make-instance 'label     :master e-box :text label)
      (e-box-l-edit e-box) (make-instance 'entry     :master e-box :width 8 :text l-edit-text)
      (e-box-dm-cb  e-box) (make-instance 'combobox  :master e-box :width 8
-					:text   (third (assoc (first val-type) *dim-type* :test #'string=))
-					:values (second (assoc (first val-type) *dim-type* :test #'string=)))
+					:text   (third  (assoc vtype *dim-type* :test #'string=))
+					:values (second (assoc vtype *dim-type* :test #'string=)))
      (e-box-b->   e-box) (make-instance 'button     :master e-box :text ">"    :width 2))
     (bind  (e-box-b-< e-box) "<ButtonRelease-1>"
 	   (lambda (event)
@@ -107,11 +108,15 @@
      (list (e-box-b-< e-box) (e-box-vt-cb e-box) (e-box-t-lb e-box)
 	   (e-box-l-edit e-box) (e-box-dm-cb e-box) (e-box-b-> e-box)))))
 	   
-(defun edit-box (&key (l-edit-text 10.0) (state 2) )
+(defun edit-box (&key (l-edit-text 10.0) (state 2) vtype )
   (let ((rez nil))
     (with-ltk ()
       (let* ((frame (make-instance 'frame))
-	     (e-box (make-instance 'e-box  :master frame :l-edit-text l-edit-text :state state))
+	     (e-box (make-instance 'e-box
+				   :master frame
+				   :l-edit-text l-edit-text
+				   :state state
+				   :vtype vtype))
 	     (b-ok  (make-instance 'button :master frame :text "Ok"   :width 3
 				   :command (lambda ()
 					      (setf (e-box-val e-box) (vd* (read-from-string (text (e-box-l-edit e-box)))
