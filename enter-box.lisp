@@ -19,16 +19,16 @@
 ;;;; (calc-state 550)
 "
   (case state
-    (0         (list nil   nil  nil   t   nil   t       t))
-    (1         (list   t   nil  nil   t     t   t       t))
-    (2         (list   t   nil    t   t     t   t       t))
-    (3         (list   t     t    t   t     t   nil     t))
-    (otherwise (list   t     t    t   t     t   t       t))))
+    (0         (list nil   nil  nil   t   nil   t   ))
+    (1         (list   t   nil  nil   t     t   t   ))
+    (2         (list   t   nil    t   t     t   t   ))
+    (3         (list   t     t    t   t     t   nil ))
+    (otherwise (list   t     t    t   t     t   t   ))))
 
 
 
-(defparameter *eb-state* '(    2  (nil   nil  nil nil   nil nil  nil))
-  "                      '(state  (b-< vt-cb t-lb  eb dm-cb b-< b-ok))"
+(defparameter *eb-state* '(    2  (nil   nil  nil nil   nil nil ))
+  "                      '(state  (b-< vt-cb t-lb  eb dm-cb b-< ))"
   )
 
 (defun cmd-pack-items (widgets)
@@ -45,34 +45,26 @@
 (defparameter *e-box-rez* nil)
 
 (defclass e-box (frame)
-  ((rez   :accessor e-box-rez   :initform nil)
-   (b-<   :accessor e-box-b-<   :initform nil)
-   (vt-cb :accessor e-box-vt-cb :initform nil)
-   (t-lb  :accessor e-box-t-lb  :initform nil)
-   (eb    :accessor e-box-eb    :initform nil)
-   (dm-cb :accessor e-box-dm-cb :initform nil)
-   (b->   :accessor e-box-b->   :initform nil)
-   (b-ok  :accessor e-box-b-ok  :initform nil)))
+  ((val    :accessor e-box-val    :initform nil)
+   (b-<    :accessor e-box-b-<    :initform nil)
+   (vt-cb  :accessor e-box-vt-cb  :initform nil)
+   (t-lb   :accessor e-box-t-lb   :initform nil)
+   (l-edit :accessor e-box-l-edit :initform nil :documentation "Line edit widget")
+   (dm-cb  :accessor e-box-dm-cb  :initform nil)
+   (b->    :accessor e-box-b->    :initform nil)))
 
-(defmethod initialize-instance :after ((e-box e-box) &key (eb-text 20.0) (label "Label" ))
+(defmethod initialize-instance :after ((e-box e-box) &key (l-edit-text 20.0) (label "Label" ))
   (let* ((val-type (mapcar #'first *dim-type*)))
     (setf
      (e-box-b-<   e-box) (make-instance 'button     :master e-box :text "<" :width 2)
      (e-box-vt-cb e-box) (make-instance 'combobox   :master e-box :width 25
 					:text (first val-type) :values val-type)
-     (e-box-t-lb  e-box) (make-instance 'label      :master e-box :text label)
-     (e-box-eb    e-box) (make-instance 'entry      :master e-box :width 8 :text eb-text)
-     (e-box-dm-cb e-box) (make-instance 'combobox   :master e-box :width 8
+     (e-box-t-lb   e-box) (make-instance 'label     :master e-box :text label)
+     (e-box-l-edit e-box) (make-instance 'entry     :master e-box :width 8 :text l-edit-text)
+     (e-box-dm-cb  e-box) (make-instance 'combobox  :master e-box :width 8
 					:text   (third (assoc (first val-type) *dim-type* :test #'string=))
 					:values (second (assoc (first val-type) *dim-type* :test #'string=)))
-     (e-box-b->   e-box) (make-instance 'button     :master e-box :text ">"    :width 2)
-     (e-box-b-ok  e-box) (make-instance 'button     :master e-box :text "Ok"   :width 3
-					:command (lambda ()
-						   (setf (e-box-rez e-box) (vd* (read-from-string (text (e-box-eb e-box)))
-										(dimensionp (text (e-box-dm-cb e-box))))
-							 *e-box-rez* (e-box-rez e-box))
-						   (format t "~S" (e-box-rez e-box))
-						   (setf *exit-mainloop* t))))
+     (e-box-b->   e-box) (make-instance 'button     :master e-box :text ">"    :width 2))
     (bind  (e-box-b-< e-box) "<ButtonRelease-1>"
 	   (lambda (event)
 	     (declare (ignore event))
@@ -80,7 +72,7 @@
 	     (setf (first *eb-state*) (max (1- (first *eb-state*)) 0))
 	     (cmd-pack-items
 	      (list (e-box-b-< e-box) (e-box-vt-cb e-box) (e-box-t-lb e-box)
-		    (e-box-eb e-box) (e-box-dm-cb e-box) (e-box-b-> e-box) (e-box-b-ok  e-box) )))) 
+		    (e-box-l-edit e-box) (e-box-dm-cb e-box) (e-box-b-> e-box))))) 
     (bind  (e-box-b-> e-box)  "<ButtonRelease-1>"
 	   (lambda (event)
 	     (declare (ignore event))
@@ -88,7 +80,7 @@
 	     (setf (first *eb-state*) (min (1+ (first *eb-state*)) 3))
 	     (cmd-pack-items
 	      (list (e-box-b-< e-box) (e-box-vt-cb e-box) (e-box-t-lb e-box)
-		    (e-box-eb e-box) (e-box-dm-cb e-box) (e-box-b-> e-box) (e-box-b-ok e-box) ))))
+		    (e-box-l-edit e-box) (e-box-dm-cb e-box) (e-box-b-> e-box)))))
     (bind (e-box-vt-cb e-box) "<<ComboboxSelected>>"
 	  (lambda (event)
             (declare (ignore event))
@@ -98,9 +90,9 @@
     (bind (e-box-dm-cb e-box) "<<ComboboxSelected>>"
 	  (lambda (event)
             (declare (ignore event))
-	    (setf (text (e-box-eb e-box))
+	    (setf (text (e-box-l-edit e-box))
 		  (format nil "~a"
-			  (/(* (read-from-string (text (e-box-eb e-box)) )
+			  (/(* (read-from-string (text (e-box-l-edit e-box)) )
 			       (vd-val (dimensionp (third (assoc (text (e-box-vt-cb e-box)) *dim-type* :test #'equal)))))
 			    (vd-val (dimensionp (text (e-box-dm-cb e-box))))))
 		  )
@@ -109,23 +101,31 @@
     (pack-forget-all e-box)    
     (cmd-pack-items
      (list (e-box-b-< e-box) (e-box-vt-cb e-box) (e-box-t-lb e-box)
-	   (e-box-eb e-box) (e-box-dm-cb e-box) (e-box-b-> e-box) (e-box-b-ok e-box)))))
+	   (e-box-l-edit e-box) (e-box-dm-cb e-box) (e-box-b-> e-box)))))
 	   
-
-(defun e-box-demo ()
-  (with-ltk ()
-    (let* ((frame (make-instance 'frame))
-	   (e-box (make-instance 'e-box :master frame :eb-text 55.0)))
-      (pack frame)
-      (pack e-box )))
-  *e-box-rez*)
+(defun edit-box (&key (l-edit-text 10.0) )
+  (let ((rez nil))
+    (with-ltk ()
+      (let* ((frame (make-instance 'frame))
+	     (e-box (make-instance 'e-box  :master frame :l-edit-text l-edit-text))
+	     (b-ok  (make-instance 'button :master frame :text "Ok"   :width 3
+				   :command (lambda ()
+					      (setf (e-box-val e-box) (vd* (read-from-string (text (e-box-l-edit e-box)))
+									   (dimensionp (text (e-box-dm-cb e-box))))
+						    rez (e-box-val e-box))
+					      (format t "~S" (e-box-val e-box))
+					      (setf *exit-mainloop* t)))))
+	(pack frame)
+	(pack e-box :side :left :padx 5 :pady 5)
+	(pack b-ok  :side :left :padx 5 :pady 5)))
+  rez))
 
 (defun e-box-demo-2 ()
   (with-ltk ()
     (let* ((frame (make-instance 'frame))
-	   (p-in  (make-instance 'e-box :label "P_in " :master frame :eb-text 155.0 ))
-	   (p-out (make-instance 'e-box :label "P_out" :master frame :eb-text 101.0))
-	   (dp    (make-instance 'e-box :label "ΔP   " :master frame :eb-text 101.0))
+	   (p-in  (make-instance 'e-box :label "P_in " :master frame :l-edit-text 155.0 ))
+	   (p-out (make-instance 'e-box :label "P_out" :master frame :l-edit-text 101.0))
+	   (dp    (make-instance 'e-box :label "ΔP   " :master frame :l-edit-text 101.0))
 	   )
       (pack frame)
       (pack p-in  :side :top)
@@ -133,5 +133,9 @@
       (pack dp    :side :top)))
   *e-box-rez*)
 
-(e-box-demo)
-(e-box-demo-2)
+(edit-box :l-edit-text 25.4)
+ (e-box-demo-2)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+

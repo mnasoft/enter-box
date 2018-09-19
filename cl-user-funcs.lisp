@@ -2,5 +2,5 @@
 
 (in-package #:cl-user )
 
-;;;;(import 'enter-box:edit-box)
+(import 'enter-box:edit-box)
 
