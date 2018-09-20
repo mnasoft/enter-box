@@ -6,6 +6,12 @@
 (defmacro mnas-bind (accessor instanse event callback)
   `(bind (,accessor ,instanse) ,event (lambda (event) (declare (ignore event)) (,callback ,instanse ,event))))
 
+(defmacro mnas-binds (accessor instanse callback events)
+  (cons 'progn
+	(mapcar
+	 #'(lambda (el) (list 'mnas-bind accessor instanse el callback))
+	 events)))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defparameter *dim-type* '(("pressure" ("MPa" "kPa" "Pa" "kgf/mm^2" "kgf/cm^2" "kgf/m^2" "mm_Hg" "mm_H2O") "Pa")
@@ -124,16 +130,12 @@
 					 :text   (third  (assoc vtype *dim-type* :test #'string=))
 					 :values (second (assoc vtype *dim-type* :test #'string=)))
      (e-box-b->   e-box) (make-instance 'button     :master e-box :text ">"    :width 2))
-    (mnas-bind e-box-b-< e-box "<ButtonRelease-1>" e-box-b-<Pressed)
-    (mnas-bind e-box-b-< e-box "<Return>"          e-box-b-<Pressed)
-    (mnas-bind e-box-b-> e-box "<ButtonRelease-1>" e-box-b->Pressed)
-    (mnas-bind e-box-b-> e-box "<Return>"          e-box-b->Pressed)
+    (mnas-binds e-box-b-< e-box  e-box-b-<Pressed ("<ButtonRelease-1>" "<Return>"))
+    (mnas-binds e-box-b-> e-box  e-box-b->Pressed ("<ButtonRelease-1>" "<Return>"))
     (mnas-bind e-box-vt-cb e-box "<<ComboboxSelected>>" e-box-vt-cb-Selected)
-    (mnas-bind e-box-l-edit e-box "<Return>" l-edit-changed)
-    (mnas-bind e-box-l-edit e-box "<Key>"    l-edit-changed)
-;;; (mnas-bind e-box-l-edit e-box "<Tab>"      l-edit-changed)
-;;; (mnas-bind e-box-l-edit e-box "<Leave>"    l-edit-changed)
-;;; (mnas-bind e-box-l-edit e-box "<FocusOut>" l-edit-changed) 
+    (mnas-binds e-box-l-edit e-box  l-edit-changed
+		("<Return>" "<Key>" ;;; "<Tab>" "<Leave>" "<FocusOut>"
+			    ))
     (mnas-bind e-box-dm-cb e-box "<<ComboboxSelected>>" e-box-dm-cb-Selected)
     (pack-forget-all e-box)    
     (cmd-pack-items (e-box-state e-box)
