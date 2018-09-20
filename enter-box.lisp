@@ -57,6 +57,16 @@
    (b->    :accessor e-box-b->    :initform nil
 	   :documentation "Кнопка вызывает увеличение количества отображаемых виджетов класса e-box")))
 
+(defgeneric l-edit-changed (e-box  text))
+
+(defmethod  l-edit-changed ((e-box e-box) text)
+  (setf (e-box-val e-box)
+	(vd* (read-from-string (text (e-box-l-edit e-box)))
+	     (dimensionp (text (e-box-dm-cb e-box)))))
+  (e-box-val e-box)
+  (format t "Event:~S; val=~S~%" text (e-box-val e-box))
+  (finish-output))
+
 (defmethod initialize-instance :after ((e-box e-box) &key (l-edit-text 20.0) (label "Label" ) vtype )
   (let* ((val-type (mapcar #'first *dim-type*)))
     (unless (member vtype val-type :test #'equal) (setf vtype (first val-type)))
@@ -67,8 +77,8 @@
      (e-box-t-lb   e-box) (make-instance 'label     :master e-box :text label)
      (e-box-l-edit e-box) (make-instance 'entry     :master e-box :width 8 :text l-edit-text)
      (e-box-dm-cb  e-box) (make-instance 'combobox  :master e-box :width 8
-					:text   (third  (assoc vtype *dim-type* :test #'string=))
-					:values (second (assoc vtype *dim-type* :test #'string=)))
+					 :text   (third  (assoc vtype *dim-type* :test #'string=))
+					 :values (second (assoc vtype *dim-type* :test #'string=)))
      (e-box-b->   e-box) (make-instance 'button     :master e-box :text ">"    :width 2))
     (bind  (e-box-b-< e-box) "<ButtonRelease-1>"
 	   (lambda (event)
@@ -76,16 +86,16 @@
 	     (pack-forget-all e-box)
 	     (setf (e-box-state e-box) (max (1- (e-box-state e-box)) 0))
 	     (cmd-pack-items (e-box-state e-box)
-	      (list (e-box-b-< e-box) (e-box-vt-cb e-box) (e-box-t-lb e-box)
-		    (e-box-l-edit e-box) (e-box-dm-cb e-box) (e-box-b-> e-box))))) 
+			     (list (e-box-b-< e-box) (e-box-vt-cb e-box) (e-box-t-lb e-box)
+				   (e-box-l-edit e-box) (e-box-dm-cb e-box) (e-box-b-> e-box))))) 
     (bind  (e-box-b-> e-box)  "<ButtonRelease-1>"
 	   (lambda (event)
 	     (declare (ignore event))
 	     (pack-forget-all e-box)
 	     (setf (e-box-state e-box) (min (1+ (e-box-state e-box)) 3))
 	     (cmd-pack-items (e-box-state e-box)
-	      (list (e-box-b-< e-box) (e-box-vt-cb e-box) (e-box-t-lb e-box)
-		    (e-box-l-edit e-box) (e-box-dm-cb e-box) (e-box-b-> e-box)))))
+			     (list (e-box-b-< e-box) (e-box-vt-cb e-box) (e-box-t-lb e-box)
+				   (e-box-l-edit e-box) (e-box-dm-cb e-box) (e-box-b-> e-box)))))
     (bind (e-box-vt-cb e-box) "<<ComboboxSelected>>"
 	  (lambda (event)
             (declare (ignore event))
@@ -97,17 +107,20 @@
             (declare (ignore event))
 	    (setf (text (e-box-l-edit e-box))
 		  (format nil "~a"
-			  (/(* (read-from-string (text (e-box-l-edit e-box)) )
+			  (/(* (read-from-string (text (e-box-l-edit e-box)))
 			       (vd-val (dimensionp (third (assoc (text (e-box-vt-cb e-box)) *dim-type* :test #'equal)))))
-			    (vd-val (dimensionp (text (e-box-dm-cb e-box))))))
-		  )
+			    (vd-val (dimensionp (text (e-box-dm-cb e-box)))))))
 	    (setf (third (assoc (text (e-box-vt-cb e-box)) *dim-type* :test #'equal)) (text (e-box-dm-cb e-box)))
 	    (finish-output)))
+    (bind (e-box-l-edit e-box) "<Return>" (lambda (event) (declare (ignore event)) (l-edit-changed e-box "<Return>")))
+    (bind (e-box-l-edit e-box) "<Tab>"    (lambda (event) (declare (ignore event)) (l-edit-changed e-box "Tab")))
+    (bind (e-box-l-edit e-box) "<Leave>"  (lambda (event) (declare (ignore event)) (l-edit-changed e-box "<Leave>")))
     (pack-forget-all e-box)    
     (cmd-pack-items (e-box-state e-box)
-     (list (e-box-b-< e-box) (e-box-vt-cb e-box) (e-box-t-lb e-box)
-	   (e-box-l-edit e-box) (e-box-dm-cb e-box) (e-box-b-> e-box)))))
-	   
+		    (list (e-box-b-< e-box) (e-box-vt-cb e-box) (e-box-t-lb e-box)
+			  (e-box-l-edit e-box) (e-box-dm-cb e-box) (e-box-b-> e-box)))))
+
+ 
 (defun edit-box (&key (l-edit-text 10.0) (state 2) vtype )
   (let ((rez nil))
     (with-ltk ()
