@@ -3,7 +3,10 @@
 (in-package #:enter-box)
 
 ;;; "enter-box" goes here. Hacks and glory await!
+(defmacro mnas-bind (accessor instanse event callback)
+  `(bind (,accessor ,instanse) ,event (lambda (event) (declare (ignore event)) (,callback ,instanse ,event))))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defparameter *dim-type* '(("pressure" ("MPa" "kPa" "Pa" "kgf/mm^2" "kgf/cm^2" "kgf/m^2" "mm_Hg" "mm_H2O") "Pa")
 			   ("length" ("Mm" "km" "m" "mm" "μm" ) "m")
@@ -99,6 +102,15 @@
 		  (list (e-box-b-< e-box) (e-box-vt-cb e-box) (e-box-t-lb e-box)
 			(e-box-l-edit e-box) (e-box-dm-cb e-box) (e-box-b-> e-box))))
 
+(defgeneric e-box-vt-cb-Selected (e-box  text))
+
+(defmethod e-box-vt-cb-Selected  ((e-box e-box) text)
+  (format t "Event:~S; val=~S~%" text (e-box-val e-box))
+  (setf (options (e-box-dm-cb e-box)) (second (assoc (text (e-box-vt-cb e-box)) *dim-type* :test #'equal)))
+  (setf (text (e-box-dm-cb e-box))  (third (assoc (text (e-box-vt-cb e-box)) *dim-type* :test #'equal)))
+  (finish-output))
+
+
 (defmethod initialize-instance :after ((e-box e-box) &key (l-edit-text 20.0) (label "Label" ) vtype )
   (let* ((val-type (mapcar #'first *dim-type*)))
     (unless (member vtype val-type :test #'equal) (setf vtype (first val-type)))
@@ -112,25 +124,17 @@
 					 :text   (third  (assoc vtype *dim-type* :test #'string=))
 					 :values (second (assoc vtype *dim-type* :test #'string=)))
      (e-box-b->   e-box) (make-instance 'button     :master e-box :text ">"    :width 2))
-    (bind (e-box-b-< e-box)   "<ButtonRelease-1>" (lambda (event) (declare (ignore event)) (e-box-b-<Pressed e-box "<ButtonRelease-1>")))
-    (bind (e-box-b-< e-box)   "<Return>"          (lambda (event) (declare (ignore event)) (e-box-b-<Pressed e-box "<Return>"))) 
-    (bind (e-box-b-> e-box)   "<ButtonRelease-1>" (lambda (event) (declare (ignore event)) (e-box-b->Pressed e-box "<ButtonRelease-1>")))
-    (bind (e-box-b-> e-box)   "<Return>"          (lambda (event) (declare (ignore event)) (e-box-b->Pressed e-box "<Return>")))
-    (bind (e-box-vt-cb e-box) "<<ComboboxSelected>>"
-	  (lambda (event)
-	    (declare (ignore event))
-	    (setf (options (e-box-dm-cb e-box)) (second (assoc (text (e-box-vt-cb e-box)) *dim-type* :test #'equal)))
-	    (setf (text (e-box-dm-cb e-box))  (third (assoc (text (e-box-vt-cb e-box)) *dim-type* :test #'equal)))
-	    (finish-output)))
-    (bind (e-box-l-edit e-box) "<Return>"   (lambda (event) (declare (ignore event)) (l-edit-changed e-box "<Return>")))
-    (bind (e-box-l-edit e-box) "<Key>"      (lambda (event) (declare (ignore event)) (l-edit-changed e-box "<Key>")))
-;;; (bind (e-box-l-edit e-box) "<Tab>"      (lambda (event) (declare (ignore event)) (l-edit-changed e-box "Tab")))
-;;; (bind (e-box-l-edit e-box) "<Leave>"    (lambda (event) (declare (ignore event)) (l-edit-changed e-box "<Leave>")))
-;;; (bind (e-box-l-edit e-box) "<FocusOut>" (lambda (event) (declare (ignore event)) (l-edit-changed e-box "<FocusOut>")))
-
-    (bind (e-box-dm-cb e-box)
-	  "<<ComboboxSelected>>"
-	  (lambda (event) (declare (ignore event)) (e-box-dm-cb-Selected e-box "<<ComboboxSelected>>")))
+    (mnas-bind e-box-b-< e-box "<ButtonRelease-1>" e-box-b-<Pressed)
+    (mnas-bind e-box-b-< e-box "<Return>"          e-box-b-<Pressed)
+    (mnas-bind e-box-b-> e-box "<ButtonRelease-1>" e-box-b->Pressed)
+    (mnas-bind e-box-b-> e-box "<Return>"          e-box-b->Pressed)
+    (mnas-bind e-box-vt-cb e-box "<<ComboboxSelected>>" e-box-vt-cb-Selected)
+    (mnas-bind e-box-l-edit e-box "<Return>" l-edit-changed)
+    (mnas-bind e-box-l-edit e-box "<Key>"    l-edit-changed)
+;;; (mnas-bind e-box-l-edit e-box "<Tab>"      l-edit-changed)
+;;; (mnas-bind e-box-l-edit e-box "<Leave>"    l-edit-changed)
+;;; (mnas-bind e-box-l-edit e-box "<FocusOut>" l-edit-changed) 
+    (mnas-bind e-box-dm-cb e-box "<<ComboboxSelected>>" e-box-dm-cb-Selected)
     (pack-forget-all e-box)    
     (cmd-pack-items (e-box-state e-box)
 		    (list (e-box-b-< e-box) (e-box-vt-cb e-box) (e-box-t-lb e-box)
