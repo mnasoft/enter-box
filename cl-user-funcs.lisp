@@ -4,3 +4,4 @@
 
 (import 'enter-box:edit-box)
 
+(import 'enter-box:e-box-demo-2)

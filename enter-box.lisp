@@ -67,6 +67,18 @@
   (format t "Event:~S; val=~S~%" text (e-box-val e-box))
   (finish-output))
 
+(defgeneric e-box-dm-cb-Selected (e-box  text))
+
+(defmethod e-box-dm-cb-Selected  ((e-box e-box) text)
+  (let ((new-dims (dimensionp (text (e-box-dm-cb e-box)))))
+    (format t "Event:~S; val=~S~%" text (e-box-val e-box))
+    (when
+	(and (e-box-val e-box)
+	     (equal (vd-dims (e-box-val e-box)) (vd-dims new-dims)) )
+      (setf (text (e-box-l-edit e-box)) (format nil "~S" (vd-val (vd/ (e-box-val e-box) new-dims))))
+      (format t "~S~%" (text (e-box-l-edit e-box))))
+    (finish-output)))
+
 (defmethod initialize-instance :after ((e-box e-box) &key (l-edit-text 20.0) (label "Label" ) vtype )
   (let* ((val-type (mapcar #'first *dim-type*)))
     (unless (member vtype val-type :test #'equal) (setf vtype (first val-type)))
@@ -98,29 +110,24 @@
 				   (e-box-l-edit e-box) (e-box-dm-cb e-box) (e-box-b-> e-box)))))
     (bind (e-box-vt-cb e-box) "<<ComboboxSelected>>"
 	  (lambda (event)
-            (declare (ignore event))
+	    (declare (ignore event))
 	    (setf (options (e-box-dm-cb e-box)) (second (assoc (text (e-box-vt-cb e-box)) *dim-type* :test #'equal)))
 	    (setf (text (e-box-dm-cb e-box))  (third (assoc (text (e-box-vt-cb e-box)) *dim-type* :test #'equal)))
-            (finish-output)))
-    (bind (e-box-dm-cb e-box) "<<ComboboxSelected>>"
-	  (lambda (event)
-            (declare (ignore event))
-	    (setf (text (e-box-l-edit e-box))
-		  (format nil "~a"
-			  (/(* (read-from-string (text (e-box-l-edit e-box)))
-			       (vd-val (dimensionp (third (assoc (text (e-box-vt-cb e-box)) *dim-type* :test #'equal)))))
-			    (vd-val (dimensionp (text (e-box-dm-cb e-box)))))))
-	    (setf (third (assoc (text (e-box-vt-cb e-box)) *dim-type* :test #'equal)) (text (e-box-dm-cb e-box)))
 	    (finish-output)))
-    (bind (e-box-l-edit e-box) "<Return>" (lambda (event) (declare (ignore event)) (l-edit-changed e-box "<Return>")))
-    (bind (e-box-l-edit e-box) "<Tab>"    (lambda (event) (declare (ignore event)) (l-edit-changed e-box "Tab")))
-    (bind (e-box-l-edit e-box) "<Leave>"  (lambda (event) (declare (ignore event)) (l-edit-changed e-box "<Leave>")))
+    (bind (e-box-l-edit e-box) "<Return>"   (lambda (event) (declare (ignore event)) (l-edit-changed e-box "<Return>")))
+    (bind (e-box-l-edit e-box) "<Key>"      (lambda (event) (declare (ignore event)) (l-edit-changed e-box "<Key>")))
+;;; (bind (e-box-l-edit e-box) "<Tab>"      (lambda (event) (declare (ignore event)) (l-edit-changed e-box "Tab")))
+;;; (bind (e-box-l-edit e-box) "<Leave>"    (lambda (event) (declare (ignore event)) (l-edit-changed e-box "<Leave>")))
+;;; (bind (e-box-l-edit e-box) "<FocusOut>" (lambda (event) (declare (ignore event)) (l-edit-changed e-box "<FocusOut>")))
+
+    (bind (e-box-dm-cb e-box)
+	  "<<ComboboxSelected>>"
+	  (lambda (event) (declare (ignore event)) (e-box-dm-cb-Selected e-box "<<ComboboxSelected>>")))
     (pack-forget-all e-box)    
     (cmd-pack-items (e-box-state e-box)
 		    (list (e-box-b-< e-box) (e-box-vt-cb e-box) (e-box-t-lb e-box)
 			  (e-box-l-edit e-box) (e-box-dm-cb e-box) (e-box-b-> e-box)))))
 
- 
 (defun edit-box (&key (l-edit-text 10.0) (state 2) vtype )
   (let ((rez nil))
     (with-ltk ()
