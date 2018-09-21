@@ -2,7 +2,7 @@
 
 (in-package #:enter-box)
 
-(edit-box :l-edit-text 25.4 :state 3 :vtype "pressure")
+(edit-box :l-edit-text 25.4 :state 3 :vtype "length" :dimension "km")
 
 (e-box-demo-2)
 
