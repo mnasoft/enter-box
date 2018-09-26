@@ -1,7 +1,8 @@
 ;;;; cl-user-funcs.lisp
 
-(in-package #:cl-user )
+(in-package #:enter-box )
 
-(import 'enter-box:edit-box)
-
-(import 'enter-box:e-box-demo-2)
+(defun enter-box-import-symbols ()
+  (import '(enter-box:edit-box
+	    enter-box:e-box-demo-2)
+	  (find-package :cl-user)))
