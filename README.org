@@ -1,0 +1,31 @@
+#+OPTIONS: tex:t
+* enter-box
+** Проект enter-box определяет GUI для ввода числа с размерность
+
+** Проект зависит от нижеперечисленных пакетов: [1/4]
+ - [ ] ltk;
+   - [ ] ltk-mw;
+ - [ ] mnas-list;
+ - [X] mnas-dim-value.
+
+\begin{equation} x=\sqrt{b} \end{equation}
+
+If $a^2=b$ and \( b=2 \), then the solution must be either $$ a=+\sqrt{2} $$ or \[ a=-\sqrt{2} \].
+
+* Пример использованния: \( \frac{n!}{k!(n-k)!} = \binom{n}{k} \).
+
+\alpha, \Alpha, \beta, \Beta, \gamma, \Gamma, \pi, \Pi, \phi, \varphi, \mu, \Phi
+
+\( \cos (2\theta) = \cos^2 \theta - \sin^2 \theta \)
+
+\( \lim\limits_{x \to \infty} \exp(-x) = 0 \)
+
+\( A_{m,n} = 
+ \begin{pmatrix}
+  a_{1,1} & a_{1,2} & \cdots & a_{1,n-1} & a_{1,n} \\
+  a_{2,1} & a_{2,2} & \cdots & a_{2,n-1} & a_{2,n} \\
+  \vdots  & \vdots  & \ddots & \vdots    & \vdots  \\
+  a_{m,1} & a_{m,2} & \cdots & a_{m,n-1} &  a_{m,n} 
+ \end{pmatrix} \)
+
+
