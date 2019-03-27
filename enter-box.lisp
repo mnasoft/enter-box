@@ -198,13 +198,16 @@
 
 (defun e-box-demo-1 ()
   (let ((d-w-r (vd* 0.2 "mm"))
-	(d-m-r nil))
+	(d-m-r (vd* 2.6 "mm"))
+	(f-1-r (vd* 0.4 "N"))
+	(l-0-r (vd* 7.5 "mm"))
+	)
     (with-ltk ()
       (let* ((frame (make-instance 'frame))
-	     (d-w   (make-instance 'e-box :label "d-w" :master frame :l-edit-text 0.2  :vtype "length" :dimension "mm"))
-	     (d-m   (make-instance 'e-box :label "d-m" :master frame :l-edit-text 2.6  :vtype "length" :dimension "mm"))
-	     (f-1   (make-instance 'e-box :label "f-1" :master frame :l-edit-text 0.4  :vtype "force"  :dimension "N"))
-	     (l-0   (make-instance 'e-box :label "l-0" :master frame :l-edit-text 40.0 :vtype "length" :dimension "mm"))
+	     (d-w   (make-instance 'e-box :label "d-w" :master frame :l-edit-text (format nil "~F" (mdv:vd-val d-w-r)) :vtype (first (mdv:quantity-name d-w-r)) :dimension (mdv:unit-name d-w-r nil)))
+	     (d-m   (make-instance 'e-box :label "d-m" :master frame :l-edit-text (format nil "~F" (mdv:vd-val d-m-r)) :vtype (first (mdv:quantity-name d-m-r)) :dimension (mdv:unit-name d-m-r nil)))
+	     (f-1   (make-instance 'e-box :label "f-1" :master frame :l-edit-text (format nil "~F" (mdv:vd-val f-1-r)) :vtype (first (mdv:quantity-name f-1-r)) :dimension (mdv:unit-name f-1-r nil)))
+	     (l-0   (make-instance 'e-box :label "l-0" :master frame :l-edit-text (format nil "~F" (mdv:vd-val l-0-r)) :vtype (first (mdv:quantity-name l-0-r)) :dimension (mdv:unit-name l-0-r nil)))
 	     (b-ok  (make-instance 'button :master frame :text "Ok"   :width 3
 				   :command (lambda () ;;;;;;
 					      (setf *exit-mainloop* t)))))
@@ -225,5 +228,10 @@
 (assoc "length" enter-box::*dim-type* :test #'string=)
 
 (e-box-demo-1)
+(edit-box )
 
+(first (mdv:quantity-name (mdv:vd* 0.2 "mm")))
+
+(mdv:unit-name (vd* 0.2 "mm") nil)
+(format nil "~F" (mdv:vd-val (vd* 0.2 "mm")))
 
