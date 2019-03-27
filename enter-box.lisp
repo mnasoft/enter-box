@@ -179,6 +179,8 @@
 	(pack b-ok  :side :left :padx 5 :pady 5)))
     rez))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defun e-box-demo-2 ()
   (with-ltk ()
     (let* ((frame (make-instance 'frame))
@@ -191,3 +193,37 @@
       (pack p-out :side :top)
       (pack dp    :side :top)))
   *e-box-rez*)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defun e-box-demo-1 ()
+  (let ((d-w-r (vd* 0.2 "mm"))
+	(d-m-r nil))
+    (with-ltk ()
+      (let* ((frame (make-instance 'frame))
+	     (d-w   (make-instance 'e-box :label "d-w" :master frame :l-edit-text 0.2  :vtype "length" :dimension "mm"))
+	     (d-m   (make-instance 'e-box :label "d-m" :master frame :l-edit-text 2.6  :vtype "length" :dimension "mm"))
+	     (f-1   (make-instance 'e-box :label "f-1" :master frame :l-edit-text 0.4  :vtype "force"  :dimension "N"))
+	     (l-0   (make-instance 'e-box :label "l-0" :master frame :l-edit-text 40.0 :vtype "length" :dimension "mm"))
+	     (b-ok  (make-instance 'button :master frame :text "Ok"   :width 3
+				   :command (lambda () ;;;;;;
+					      (setf *exit-mainloop* t)))))
+	(bind (e-box-l-edit d-w) "<Return>"
+	      (lambda (event)
+		(declare (ignore event))
+		(setf (e-box-val d-w) (vd* (read-from-string (text (e-box-l-edit d-w))) (dimensionp (text (e-box-dm-cb d-w))))
+		      d-w-r (e-box-val d-w))))
+	(bind (e-box-l-edit d-m) "<Return>"
+	      (lambda (event)
+		(declare (ignore event))
+		(setf (e-box-val d-m) (vd* (read-from-string (text (e-box-l-edit d-m))) (dimensionp (text (e-box-dm-cb d-m))))
+		      d-m-r (e-box-val d-m))))
+
+	(pack frame) (pack d-w :side :top) (pack d-m :side :top) (pack l-0 :side :top) (pack f-1 :side :top) (pack b-ok :side :top)))
+    (list d-w-r d-m-r)))
+
+(assoc "length" enter-box::*dim-type* :test #'string=)
+
+(e-box-demo-1)
+
+
