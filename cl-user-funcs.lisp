@@ -4,5 +4,6 @@
 
 (defun enter-box-import-symbols ()
   (import '(enter-box:edit-box
+	    enter-box:e-box-demo-1
 	    enter-box:e-box-demo-2)
 	  (find-package :cl-user)))
