@@ -35,37 +35,36 @@
 ;;;; (edit-box )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defun e-box-demo-1 ()
-  (let ((d-w-r (vd* 0.2 "mm"))
-	(d-m-r (vd* 2.6 "mm"))
-	(f-1-r (vd* 0.4 "N"))
-	(l-0-r (vd* 7.5 "mm"))
-	)
+   	   
+(defun spring-dialog ()
+  (let* ((spr (make-instance 'mspr:spring ))
+	 (d-w-r (vd* (mspr:d-w spr)  "mm"))
+	 (d-m-r (vd* (mspr:d-m spr)  "mm"))
+	 (n-w-r (vd* (mspr:n-w spr)))
+	 (l-0-r (vd* (mspr:l-0 spr) "mm"))
+	 )
     (with-ltk ()
       (let* ((frame (make-instance 'frame))
-	     (d-w   (make-instance 'e-box :label "d-w" :master frame :l-edit-text (format nil "~F" (mdv:vd-val d-w-r)) :vtype (first (mdv:quantity-name d-w-r)) :dimension (mdv:unit-name d-w-r nil)))
-	     (d-m   (make-instance 'e-box :label "d-m" :master frame :l-edit-text (format nil "~F" (mdv:vd-val d-m-r)) :vtype (first (mdv:quantity-name d-m-r)) :dimension (mdv:unit-name d-m-r nil)))
-	     (f-1   (make-instance 'e-box :label "f-1" :master frame :l-edit-text (format nil "~F" (mdv:vd-val f-1-r)) :vtype (first (mdv:quantity-name f-1-r)) :dimension (mdv:unit-name f-1-r nil)))
-	     (l-0   (make-instance 'e-box :label "l-0" :master frame :l-edit-text (format nil "~F" (mdv:vd-val l-0-r)) :vtype (first (mdv:quantity-name l-0-r)) :dimension (mdv:unit-name l-0-r nil)))
+	     (d-w   (make-instance 'e-box :label "d-w" :master frame :l-edit-text (format nil "~F" (mdv:vd-val d-w-r)) :vtype (first (mdv:quantity-name d-w-r)) :dimension (mdv:unit-name d-w-r nil))) ;; Диаметр проволоки 
+	     (d-m   (make-instance 'e-box :label "d-m" :master frame :l-edit-text (format nil "~F" (mdv:vd-val d-m-r)) :vtype (first (mdv:quantity-name d-m-r)) :dimension (mdv:unit-name d-m-r nil))) ;; Средний диаметр пружины 
+	     (l-0   (make-instance 'e-box :label "l-0" :master frame :l-edit-text (format nil "~F" (mdv:vd-val l-0-r)) :vtype (first (mdv:quantity-name l-0-r)) :dimension (mdv:unit-name l-0-r nil))) ;; Высота пружины в свободном состоянии
+	     (n-w   (make-instance 'e-box :label "n-w" :master frame :l-edit-text (format nil "~F" (mdv:vd-val n-w-r)) :vtype (first (mdv:quantity-name n-w-r)) :dimension (mdv:unit-name n-w-r nil))) ;; Количество рабочих витков
 	     (b-ok  (make-instance 'button :master frame :text "Ok"   :width 3
-				   :command (lambda () ;;;;;;
+				   :command (lambda ()
+					      (setf (mspr:d-w spr) (* (mdv:vd-val d-w-r) 1000)
+						    (mspr:d-m spr) (* (mdv:vd-val d-m-r) 1000)
+				      		    (mspr:l-0 spr) (* (mdv:vd-val l-0-r) 1000)
+						    (mspr:n-w spr) (mdv:vd-val n-w-r))
+					      
 					      (setf *exit-mainloop* t)))))
-	(bind (e-box-l-edit d-w) "<Return>"
-	      (lambda (event)
-		(declare (ignore event))
-		(setf (e-box-val d-w) (vd* (read-from-string (text (e-box-l-edit d-w))) (dimensionp (text (e-box-dm-cb d-w))))
-		      d-w-r (e-box-val d-w))))
-	(bind (e-box-l-edit d-m) "<Return>"
-	      (lambda (event)
-		(declare (ignore event))
-		(setf (e-box-val d-m) (vd* (read-from-string (text (e-box-l-edit d-m))) (dimensionp (text (e-box-dm-cb d-m))))
-		      d-m-r (e-box-val d-m))))
+	(pack frame) (pack d-w :side :top) (pack d-m :side :top) (pack l-0 :side :top) (pack n-w :side :top)  (pack b-ok :side :top)))
+    (list d-w-r d-m-r spr)))
 
-	(pack frame) (pack d-w :side :top) (pack d-m :side :top) (pack l-0 :side :top) (pack f-1 :side :top) (pack b-ok :side :top)))
-    (list d-w-r d-m-r)))
+;;;; (f-1-r (vd* 0.4 "N"))	     
+;;;; (f-1   (make-instance 'e-box :label "f-1" :master frame :l-edit-text (format nil "~F" (mdv:vd-val f-1-r)) :vtype (first (mdv:quantity-name f-1-r)) :dimension (mdv:unit-name f-1-r nil))) ;; Первая сила     
+;;;; (pack f-1 :side :top)
 
-;;;; (e-box-demo-1)
+;;;; (spring-dialog)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -85,5 +84,3 @@
   *e-box-rez*)
 
 ;;;; (e-box-demo-2)
-
-

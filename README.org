@@ -9,3 +9,5 @@
  - [ ] mnas-list;
  - [X] mnas-dim-value.
 
+** TODO Перенести spring-dialog в отдельный проект
+

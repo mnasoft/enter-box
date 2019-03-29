@@ -16,7 +16,8 @@
 
 (defparameter *dim-type* '(("pressure" ("MPa" "kPa" "Pa" "kgf/mm^2" "kgf/cm^2" "kgf/m^2" "mm_Hg" "mm_H2O") "Pa")
 			   ("length" ("Mm" "km" "m" "mm" "μm" ) "m")
-			   ("force"  ("MN" "tf" "kN" "kgf" "N" "gf") "N")))
+			   ("force"  ("MN" "tf" "kN" "kgf" "N" "gf") "N")
+			   ("dimensionless" ("ul") "ul")))
 
 (defun calc-state (state)
   "Вычисляет состояние видимости виджетов
