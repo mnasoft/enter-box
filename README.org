@@ -1,7 +1,22 @@
 #+INCLUDE: "~/org/header/header.org"
 
-* enter-box
+* Enter-Box
 Проект enter-box определяет GUI для ввода числа с размерность   
+
+* Внешний вид виджета
+
+#+CAPTION: Enter-Box в развернутом виде
+#+name: Ris:full
+[[./images/screenshot.png]]
+
+#+CAPTION: Enter-Box в полуразвернутом виде
+#+name: Ris:half
+[[./images/screenshot-02.png]]
+
+#+CAPTION: Enter-Box в свернутом виде
+#+name: Ris:half
+[[./images/screenshot-03.png]]
+
 
 ** Проект зависит от нижеперечисленных пакетов: [1/4]
  - [ ] ltk;
