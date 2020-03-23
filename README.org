@@ -1,4 +1,16 @@
-#+INCLUDE: "~/org/header/header.org"
+#+OPTIONS: ':nil *:t -:t ::t <:t H:3 \n:nil ^:t arch:headline
+#+OPTIONS: author:t broken-links:nil c:nil creator:nil
+#+OPTIONS: d:(not "LOGBOOK") date:t e:t email:nil f:t inline:t num:t
+#+OPTIONS: p:nil pri:nil prop:nil stat:t tags:t tasks:t tex:t
+#+OPTIONS: timestamp:t title:t toc:t todo:t |:t
+#+TITLE: README
+#+DATE: <2020-03-23 Пн>
+#+AUTHOR:
+#+EMAIL: namatv@MNASOFT-01
+#+LANGUAGE: ru
+#+SELECT_TAGS: export
+#+EXCLUDE_TAGS: noexport
+#+CREATOR: Emacs 26.3 (Org mode 9.1.9)
 
 * Enter-Box
 Проект enter-box определяет GUI для ввода числа с размерность   
@@ -25,4 +37,37 @@
  - [X] mnas-dim-value.
 
 ** TODO Перенести spring-dialog в отдельный проект
+
+* [10/13] Задачи
+1. [X] Исключить из класса e-box кнопку b-ok.
+2. [X] Включить b-ok в состав функции edit-box.
+3. [X] Добавить в класс e-box слот state, отвечающий за состояние видимости для каждого экземпляра e-box (по отдельности).    
+4. [X] Возвращаемое значение edit-box определить через локальную переменую.
+5. [X] Переименовать слот rez в val.
+6. [X] Переименовать слот eb (Edit Box) в l-edit (Line Edit).
+7. [X] Добавить в функцию initialize-instance следущие ключевые параметры:
+   - [X] параметр, отражающий состояние видимости виджетов;
+   - [X] параметр l-edit-text, отвечающий начальное численное значение слота l-edit;
+   - [X] параметр vtype, отвечающий за выбор типа вводимой величины (or "pressure" "length" ...)
+   - [X] параметр, отвечающий за единицу вводимой величины (для "pressure" (or "kPa" "Pa" "kgf/mm^2" ...)).
+8. Добавить в функцию edit-box следущие ключевые параметры:
+   - параметр, отражающий состояние видимости виджетов;
+   - параметр l-edit-text, отвечающий начальное численное значение слота l-edit;
+   - параметр vtype, отвечающий за выбор типа вводимой величины (or "pressure" "length" ...);
+   - параметр, отвечающий за единицу вводимой величины (для "pressure" (or "kPa" "Pa" "kgf/mm^2" ...)).
+9. [X] Добавить обработку нажатия на клавишу "<Return>" "<Key>" по которой будет вычисляться значение слота value.
+10. [X] Добавить обработку нажатия "<Return>" на кнопки b-> и b-< класса e-box.
+11. [X] Добавить обработку нажатия "<Return>" на кнопки b-ok в функции edit-box.
+12. [ ] Выполнить тестирование функции edit-box для определения необходимых новых черт поведения.
+13. [ ] Выполнить тестирование функции edit-box для выявления ошибок.
+14. [ ] Выполнить настройку для отображения текста в l-edit количество значащих цифр не более 6.  
+
+
+    
+   
+
+   
+
+
+
 
