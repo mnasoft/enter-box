@@ -2,10 +2,8 @@
 
 (in-package #:enter-box)
 
-(annot:enable-annot-syntax)
-
-@export
-@annot.doc:doc
+(export 'edit-box )
+(defun edit-box (&key (l-edit-text 10.0) (state 2) vtype dimension (label "Значение"))
 "@b(Описание:) edit-box возвращает число с размерностью, 
 которое можно ввести при помощи диалогового окна.
 @b(Пример использования:)
@@ -13,7 +11,6 @@
 (edit-box ) 
 @end(code)
 "
-(defun edit-box (&key (l-edit-text 10.0) (state 2) vtype dimension (label "Значение"))
   (let ((rez nil))
     (with-ltk ()
       (let* ((frame (make-instance 'frame))

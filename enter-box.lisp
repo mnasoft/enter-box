@@ -1,7 +1,5 @@
 ;;;; enter-box.lisp
 
-(annot:enable-annot-syntax)
-
 (in-package #:cl-user)
 
 (defpackage #:enter-box
@@ -24,28 +22,38 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-@export
+(export 'e-box-l-edit-changed )
 (defgeneric e-box-l-edit-changed (e-box  text)
   (:documentation "Реактор изменения содержимого l-edit"))
 
-@export
+(export 'e-box-dm-cb-Selected )
 (defgeneric e-box-dm-cb-Selected (e-box  text)
   (:documentation "Реактор выбора элемента из списка dm-cb"))
 
-@export
+(export 'e-box-b->Pressed     )
 (defgeneric e-box-b->Pressed     (e-box  text)
   (:documentation "Реактор нажатия на кнопку b->"))
 
-@export
+(export 'e-box-b-<Pressed     )
 (defgeneric e-box-b-<Pressed     (e-box  text)
   (:documentation "Реактор нажатия на кнопку b-<"))
 
-@export
+(export 'e-box-vt-cb-Selected )
 (defgeneric e-box-vt-cb-Selected (e-box  text))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-@annot.class:export-class
+
+(export 'e-box)
+(export 'e-box-val)
+(export 'e-box-state)
+(export 'e-box-b-<)
+(export 'e-box-vt-cb)
+(export 'e-box-t-lb)
+(export 'e-box-l-edit)
+(export 'e-box-dm-cb)
+(export 'e-box-b->)
+
 (defclass e-box (frame)
   ((val    :accessor e-box-val    :initform nil)
    (state  :accessor e-box-state  :initform   2 :initarg :state
