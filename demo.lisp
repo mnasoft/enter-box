@@ -43,10 +43,20 @@
 	(pack b-ok  :side :left :padx 5 :pady 5)))
     rez))
 
+;;;; (edit-box)
+
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defparameter *e-box-rez* nil)
+
+(defmethod <e-box>-val-changed ((e-box <e-box>))
+  "@b(Описание:) метод @b(<e-box>-val-changed) устанавливает отображение
+ значения ЧсР в окне диалога."
+  (setf (text (<e-box>-l-edit e-box))
+        (format nil "~F"
+                (mdv:vd-val
+                 (mdv:vd/ (<e-box>-val e-box)  (text (<e-box>-dm-cb e-box)))))))
 
 (defun e-box-demo-2 ()
   (with-ltk ()
@@ -55,6 +65,23 @@
 	   (p-out (make-instance '<e-box> :label "P_out" :master frame :l-edit-text 101.0))
 	   (dp    (make-instance '<e-box> :label "ΔP   " :master frame :l-edit-text 101.0))
 	   )
+      (bind p-in "<FocusOut>"
+	(lambda (event)
+	  (declare (ignore event))
+          (setf (<e-box>-val dp) (mdv:vd- (<e-box>-val p-in) (<e-box>-val p-out)))
+          (<e-box>-val-changed dp)
+          ))
+      (bind p-out "<FocusOut>"
+	(lambda (event)
+	  (declare (ignore event))
+          (setf (<e-box>-val dp) (mdv:vd- (<e-box>-val p-in) (<e-box>-val p-out)))
+          (<e-box>-val-changed dp)
+          ))
+      (bind dp "<FocusOut>"
+	(lambda (event)
+	  (declare (ignore event))
+          (setf (<e-box>-val p-in) (mdv:vd+  (<e-box>-val dp) (<e-box>-val p-out)))
+          (<e-box>-val-changed p-in)))
       (pack frame)
       (pack p-in  :side :top)
       (pack p-out :side :top)
@@ -62,3 +89,4 @@
   *e-box-rez*)
 
 ;;;; (e-box-demo-2)
+

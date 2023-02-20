@@ -89,6 +89,8 @@
 			   ("length" ("Mm" "km" "m" "mm" "μm" ) "m")
 			   ("force"  ("MN" "tf" "kN" "kgf" "N" "gf") "N")
    			   ("mass flow rate"  ("t/s" "kg/s" "kg/h" "g/s") "kg/s")
+                           ("tempetarure" ("K") "K")
+                           ("velocity" ("km/s" "km/min" "km/h" "m/s" "m/min" "m/h" "kn" "knot") "m/s") ;; "in/s" 
 			   ("dimensionless" ("ul") "ul")))
 
 (defun calc-state (state)
@@ -134,7 +136,8 @@
 (defmethod <e-box>-dm-cb-Selected  ((e-box <e-box>) text)
   (format t "~&<e-box>-dm-cb-Selected:start ... ")
   (format t "Event:~S; val=~S" text (<e-box>-val e-box))
-  (let ((new-dims (mdv:quantity-from-string (text (<e-box>-dm-cb e-box)))))
+  (let ((new-dims (mdv:quantity-from-string
+                   (concatenate 'string "1" " " (text (<e-box>-dm-cb e-box))))))
     (when (and (<e-box>-val e-box)
 	       (equal (mdv:vd-dims (<e-box>-val e-box)) (mdv:vd-dims new-dims)) )
       (setf (text (<e-box>-l-edit e-box))
@@ -142,10 +145,6 @@
   (format t "-> val=~S" (<e-box>-val e-box))
   (format t "... <e-box>-dm-cb-Selected:end~%")    
   (finish-output))
-
-;;(mdv:quantity-from-string "kgf/cm^2")
-;;(mdv:quantity-from-string "MPa")
-;;(mdv:vd-dims "MPa")
 
 (defmethod <e-box>-b->Pressed  ((e-box <e-box>) text)
   (format t "~&<e-box>-b->Pressed:start ... ")
