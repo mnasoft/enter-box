@@ -1,6 +1,6 @@
 ;;;; enter-box.asd
 
-(defsystem #:enter-box
+(defsystem "enter-box"
   :description "Enter-Box представляет виджет для ввода чисел с размерностью"
   :author "Mykola Matvyeyev <mnasoft@gmail.com>"
   :license "GNU GENERAL PUBLIC LICENSE Version 3, 29 June 2007 or later"
