@@ -1,8 +1,8 @@
 ;;;; enter-box.lisp
 
-(defpackage #:enter-box
-  (:nicknames "MEB")
-  (:use #:cl #:ltk #:ltk-mw)            ; #:mnas-dim-value #:mnas-list
+(defpackage #:enter-box/core
+  (:nicknames "MEB/CORE")
+  (:use #:cl #:ltk #:ltk-mw)
   (:export <e-box>
            <e-box>-l-edit-changed 
            <e-box>-b->Pressed     
@@ -25,12 +25,13 @@
            mnas-binds
            *dim-type*
            calc-state
-           cmd-pack-items)
+           cmd-pack-items
+           unit-name-max-length)
   (:documentation
    "Enter-Box представляет виджет для ввода чисел с размерностью.  Для
 детального описания см. README.org") )
 
-(in-package #:enter-box)
+(in-package #:enter-box/core)
 
 (defgeneric <e-box>-l-edit-changed (e-box  text)
   (:documentation "Реактор изменения содержимого l-edit"))
@@ -89,9 +90,26 @@
 			   ("length" ("Mm" "km" "m" "mm" "μm" ) "m")
 			   ("force"  ("MN" "tf" "kN" "kgf" "N" "gf") "N")
    			   ("mass flow rate"  ("t/s" "kg/s" "kg/h" "g/s") "kg/s")
+                           ("density" ("t/m^3" "kg/m^3" "kg/cm^3" "kg/mm^3" "g/m^3" "g/cm^3" "g/mm^3") "kg/m^3")
                            ("tempetarure" ("K") "K")
                            ("velocity" ("km/s" "km/min" "km/h" "m/s" "m/min" "m/h" "kn" "knot") "m/s") ;; "in/s" 
 			   ("dimensionless" ("ul") "ul")))
+
+(defun unit-name-max-length ()
+  (loop :for (name units unit) :in *dim-type*
+        :collect (length name) :into var
+        :finally (return (apply #'max var))))
+
+(defun unit-dimension-max-length ()
+  (loop
+    :for i
+      :in (apply #'append
+                 (loop :for (name units unit) :in *dim-type*
+                       :collect  units))
+    :collect (length i) :into var
+    :finally (return (apply #'max var))))
+
+(unit-dimension-max-length)
 
 (defun calc-state (state)
   "Вычисляет состояние видимости виджетов
@@ -141,7 +159,7 @@
     (when (and (<e-box>-val e-box)
 	       (equal (mdv:vd-dims (<e-box>-val e-box)) (mdv:vd-dims new-dims)) )
       (setf (text (<e-box>-l-edit e-box))
-            (format nil "~S" (mdv:vd-val (mdv:vd/ (<e-box>-val e-box) new-dims))))))
+            (format nil "~10F" (mdv:vd-val (mdv:vd/ (<e-box>-val e-box) new-dims))))))
   (format t "-> val=~S" (<e-box>-val e-box))
   (format t "... <e-box>-dm-cb-Selected:end~%")    
   (finish-output))
@@ -193,10 +211,10 @@
     (unless (member dimension (second (assoc vtype *dim-type* :test #'string=)) :test #'equal)
       (setf dimension (third  (assoc vtype *dim-type* :test #'string=))))
     (setf (<e-box>-b-<    e-box) (make-instance 'button    :master e-box :width 2 :text "<" )
-	  (<e-box>-vt-cb  e-box) (make-instance 'combobox  :master e-box :width 25 :text vtype  :values val-type)
+	  (<e-box>-vt-cb  e-box) (make-instance 'combobox  :master e-box :width (unit-name-max-length) :text vtype  :values val-type)
 	  (<e-box>-t-lb   e-box) (make-instance 'label     :master e-box :text label)
-	  (<e-box>-l-edit e-box) (make-instance 'entry     :master e-box :width 8 :text l-edit-text)
-	  (<e-box>-dm-cb  e-box) (make-instance 'combobox  :master e-box :width 8 :text dimension :values (second (assoc vtype *dim-type* :test #'string=)))
+	  (<e-box>-l-edit e-box) (make-instance 'entry     :master e-box :width 12 :text l-edit-text)
+	  (<e-box>-dm-cb  e-box) (make-instance 'combobox  :master e-box :width (unit-dimension-max-length) :text dimension :values (second (assoc vtype *dim-type* :test #'string=)))
 	  (<e-box>-b->    e-box) (make-instance 'button    :master e-box :text ">"    :width 2))
     (mnas-binds <e-box>-b-< e-box  <e-box>-b-<Pressed ("<ButtonRelease-1>" "<Return>"))
     (mnas-binds <e-box>-b-> e-box  <e-box>-b->Pressed ("<ButtonRelease-1>" "<Return>"))
@@ -209,7 +227,6 @@
 			  (<e-box>-l-edit e-box) (<e-box>-dm-cb e-box) (<e-box>-b-> e-box)))
     (setf (<e-box>-val e-box)
 	  (mdv:vd* (read-from-string (text (<e-box>-l-edit e-box)))
-	       (mdv:quantity-from-string (text (<e-box>-dm-cb e-box)))))
-    ))
+	       (mdv:quantity-from-string (text (<e-box>-dm-cb e-box)))))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
