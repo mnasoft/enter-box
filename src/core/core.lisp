@@ -88,8 +88,10 @@
 
 (defparameter *dim-type* '(("pressure" ("MPa" "kPa" "Pa" "kgf/mm^2" "kgf/cm^2" "kgf/m^2" "mm_Hg" "mm_H2O") "Pa")
 			   ("length" ("Mm" "km" "m" "mm" "μm" ) "m")
+                           ("area" ("m^2" "dm^2" "cm^2" "mm^2") "mm^2")
 			   ("force"  ("MN" "tf" "kN" "kgf" "N" "gf") "N")
    			   ("mass flow rate"  ("t/s" "kg/s" "kg/h" "g/s") "kg/s")
+                           ("molecular mass" ("kg/kmol" "kg/mol" "g/mol") "kg/mol")
                            ("density" ("t/m^3" "kg/m^3" "kg/cm^3" "kg/mm^3" "g/m^3" "g/cm^3" "g/mm^3") "kg/m^3")
                            ("tempetarure" ("K") "K")
                            ("velocity" ("km/s" "km/min" "km/h" "m/s" "m/min" "m/h" "kn" "knot") "m/s") ;; "in/s" 

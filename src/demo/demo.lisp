@@ -71,12 +71,13 @@
   (with-ltk ()
     (let* ((rb-variable 1)
            (frame    (make-instance 'frame :name "frame-p"))
-           (frame-l  (make-instance 'frame :master frame :name "frame-l"))
-           (frame-r  (make-instance 'frame :master frame :name "frame-r"))
+           (frame-l  (make-instance 'frame :master frame   :name "frame-l"))
+           (frame-r  (make-instance 'frame :master frame   :name "frame-r"))
            (frame-p  (make-instance 'frame :master frame-l :name "frame-p"))
+           (frame-kμ (make-instance 'frame :master frame-l :name "frame-kμ"))
            (frame-rb (make-instance 'frame :master frame-l :name "frame-rb"))           
            (frame-t  (make-instance 'frame :master frame-r :name "frame-t"))
-           (culc     (make-instance 'button :text "Culc"  :name "culc"))
+           (culc     (make-instance 'button :text "Culc"   :name "culc"))
            (rb-g     (make-instance 'radio-button
                                     :master frame-rb
                                     :text "Расход G"
@@ -106,9 +107,12 @@
                                    #'(lambda (event)
                                        (declare (ignore event))
                                        (setf rb-variable 2))))
-	   (p-in  (make-instance '<e-box> :label "P_in " :master frame-p :vtype "pressure" :l-edit-text 155.0 ))
-	   (p-out (make-instance '<e-box> :label "P_out" :master frame-p :vtype "pressure" :l-edit-text 101.0))
-	   (dp    (make-instance '<e-box> :label "ΔP   " :master frame-p :l-edit-text 101.0))
+	   (p-in  (make-instance '<e-box> :label "P_in " :master frame-p :vtype "pressure" :l-edit-text 201.325 :dimension "kPa"))
+	   (p-out (make-instance '<e-box> :label "P_out" :master frame-p :vtype "pressure" :l-edit-text 101.325 :dimension "kPa"))
+	   (dp    (make-instance '<e-box> :label "ΔP   " :master frame-p :vtype "pressure" :l-edit-text 100.000 :dimension "kPa"))
+           (area  (make-instance '<e-box> :label "A    " :master frame-p :vtype "area"     :l-edit-text 27.0))
+           (μ     (make-instance '<e-box> :label "μ    " :master frame-kμ :vtype "molecular mass" :l-edit-text 0.02895))
+           (k     (make-instance '<e-box> :label "k    " :master frame-kμ :vtype "dimensionless" :l-edit-text 1.4))
            (t-in  (make-instance '<e-box> :label "T_in " :master frame-t :vtype "tempetarure" :l-edit-text (+ 273.15 15.0)))
            (t-out (make-instance '<e-box> :label "T_out" :master frame-t :vtype "tempetarure" :l-edit-text (+ 273.15)))
            (ρ-in  (make-instance '<e-box> :label "ρ_in " :master frame-t :vtype "density" :l-edit-text 1.2))
@@ -143,11 +147,13 @@
       (pack frame-l  :side :left)
       (pack frame-r  :side :left)
       
-      (pack frame-p :side :top)
-      (pack frame-t :side :left)
+      (pack frame-p  :side :top)
+      (pack frame-kμ :side :top)
+      (pack frame-t  :side :left)
       (pack frame-rb :side :top)
       
       (pack p-in    :side :top) (pack p-out   :side :top) (pack dp      :side :top)
+      (pack area    :side :top) (pack k       :side :top) (pack μ       :side :top)
       
       (pack culc    :side :top)
       
