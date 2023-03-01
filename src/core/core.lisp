@@ -1,5 +1,4 @@
 ;;;; enter-box.lisp
-
 (defpackage #:enter-box/core
   (:nicknames "MEB/CORE")
   (:use #:cl #:ltk #:ltk-mw)
@@ -7,7 +6,8 @@
            <e-box>-l-edit-changed 
            <e-box>-b->Pressed     
            <e-box>-b-<Pressed     
-           <e-box>-vt-cb-Selected 
+           <e-box>-vt-cb-Selected
+           <e-box>-val-changed
            <e-box>
            <e-box>-val
            <e-box>-state
@@ -156,12 +156,11 @@
 (defmethod <e-box>-dm-cb-Selected  ((e-box <e-box>) text)
   (format t "~&<e-box>-dm-cb-Selected:start ... ")
   (format t "Event:~S; val=~S" text (<e-box>-val e-box))
-  (let ((new-dims (mdv:quantity-from-string
-                   (concatenate 'string "1" " " (text (<e-box>-dm-cb e-box))))))
+  (let ((new-dims (mdv:quantity-by-dimension-string (text (<e-box>-dm-cb e-box)))))
     (when (and (<e-box>-val e-box)
 	       (equal (mdv:vd-dims (<e-box>-val e-box)) (mdv:vd-dims new-dims)) )
       (setf (text (<e-box>-l-edit e-box))
-            (format nil "~10F" (mdv:vd-val (mdv:vd/ (<e-box>-val e-box) new-dims))))))
+            (format nil "~6F" (mdv:vd-val (mdv:vd/ (<e-box>-val e-box) new-dims))))))
   (format t "-> val=~S" (<e-box>-val e-box))
   (format t "... <e-box>-dm-cb-Selected:end~%")    
   (finish-output))
@@ -201,6 +200,15 @@
   (format t "-> val=~S" (<e-box>-val e-box))
   (format t "... <e-box>-vt-cb-Selected:end~%")
   (finish-output))
+
+(defmethod <e-box>-val-changed ((e-box <e-box>))
+  "@b(Описание:) метод @b(<e-box>-val-changed) обновляет отображение
+ значения ЧсР в окне диалога в соответствии с его значением."
+  (setf (text (<e-box>-l-edit e-box))
+        (format nil "~6F"
+                (mdv:vd-val
+                 (mdv:vd/ (<e-box>-val e-box)
+                          (mdv:quantity-by-dimension-string (text (<e-box>-dm-cb e-box))))))))
 
 (defmethod initialize-instance :after ((e-box <e-box>)
 				       &key

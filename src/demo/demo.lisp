@@ -59,14 +59,6 @@
 
 (defparameter *e-box-rez* nil)
 
-(defmethod <e-box>-val-changed ((e-box <e-box>))
-  "@b(Описание:) метод @b(<e-box>-val-changed) устанавливает отображение
- значения ЧсР в окне диалога."
-  (setf (text (<e-box>-l-edit e-box))
-        (format nil "~F"
-                (mdv:vd-val
-                 (mdv:vd/ (<e-box>-val e-box)  (text (<e-box>-dm-cb e-box)))))))
-
 (defun e-box-demo-2 ()
   (with-ltk ()
     (let* ((rb-variable 1)
@@ -133,15 +125,54 @@
              (<e-box>-val-changed p-in))
            (culc-Presse (event)
              (declare (ignore event))
-             (break "TOOL culc-Pressed: ~A" (ltk:value rb-f))
-             )
-           )
+             (cond
+               ((= rb-variable 0)
+                #+nil (break "Расход G: ~A" rb-variable)
+                (setf (<e-box>-val G) (mdv:vd*
+                                       (mdv:quantity-by-dimension-string "kg/s")
+                                       (idelchik:mass-flow-rate
+                                        (make-instance 'idelchik:<forsunka> :area (mdv:vd-val (<e-box>-val area))) 
+                                        (make-instance 'idelchik:<param> :tempreche (mdv:vd-val (<e-box>-val t-in )) :pressure (mdv:vd-val (<e-box>-val p-in)))
+                                        (make-instance 'idelchik:<param> :tempreche (mdv:vd-val (<e-box>-val t-out)) :pressure (mdv:vd-val (<e-box>-val p-out)))
+                                        (make-instance 'idelchik:<gas-k-mu> :mu (mdv:vd-val (<e-box>-val μ)) :k (mdv:vd-val (<e-box>-val k))))))
+                (<e-box>-val-changed G)
+                (setf (<e-box>-val W) (mdv:vd*
+                                       (mdv:quantity-by-dimension-string "m/s")
+                                       (idelchik:velocity-by-param-in-out  
+                                        (make-instance 'idelchik:<param> :tempreche (mdv:vd-val (<e-box>-val t-in )) :pressure (mdv:vd-val (<e-box>-val p-in)))
+                                        (make-instance 'idelchik:<param> :tempreche (mdv:vd-val (<e-box>-val t-out)) :pressure (mdv:vd-val (<e-box>-val p-out)))
+                                        (make-instance 'idelchik:<gas-k-mu> :mu (mdv:vd-val (<e-box>-val μ)) :k (mdv:vd-val (<e-box>-val k))))))
+                (<e-box>-val-changed W))
+               ((= rb-variable 1)
+                #+nil (break "Площадь F: ~A" rb-variable)
+                (setf (<e-box>-val area)
+                      (mdv:vd* (mdv:quantity-by-dimension-string "m^2")
+                               (idelchik:<forsunka>-area
+                                (idelchik:area-by-mass-flow-rate
+                                 (make-instance 'idelchik:<forsunka> :area (mdv:vd-val (<e-box>-val area)))
+                                 (mdv:vd-val (<e-box>-val G))
+                                 (make-instance 'idelchik:<param> :tempreche (mdv:vd-val (<e-box>-val t-in )) :pressure (mdv:vd-val (<e-box>-val p-in)))
+                                 (make-instance 'idelchik:<param> :tempreche (mdv:vd-val (<e-box>-val t-out)) :pressure (mdv:vd-val (<e-box>-val p-out)))
+                                 (make-instance 'idelchik:<gas-k-mu> :mu (mdv:vd-val (<e-box>-val μ)) :k (mdv:vd-val (<e-box>-val k)))))))
+                (<e-box>-val-changed area))
+               ((= rb-variable 2)
+                #+nil
+                (break "Давление P_in: ~A" #+nil (ltk:value rb-f) rb-variable)
+                (setf (<e-box>-val p-in)
+                      (mdv:vd* (mdv:quantity-by-dimension-string "Pa")
+                               (idelchik:pressure
+                                (idelchik:param_in-by-mass-flow-rate
+                                 (make-instance 'idelchik:<forsunka> :area (mdv:vd-val (<e-box>-val area)))
+                                 (mdv:vd-val (<e-box>-val G))
+                                 (make-instance 'idelchik:<param> :tempreche (mdv:vd-val (<e-box>-val t-in )) :pressure (mdv:vd-val (<e-box>-val p-in)))
+                                 (make-instance 'idelchik:<param> :tempreche (mdv:vd-val (<e-box>-val t-out)) :pressure (mdv:vd-val (<e-box>-val p-out)))
+                                 (make-instance 'idelchik:<gas-k-mu> :mu (mdv:vd-val (<e-box>-val μ)) :k (mdv:vd-val (<e-box>-val k)))))))
+                (<e-box>-val-changed p-in))
+               )))
         (bind p-in "<FocusOut>" #'dp-func)   (bind (<e-box>-l-edit p-in)  "<Return>" #'dp-func)
         (bind p-in "<FocusOut>" #'dp-func)   (bind (<e-box>-l-edit p-out) "<Return>" #'dp-func)
         (bind dp   "<FocusOut>" #'p-in-func) (bind (<e-box>-l-edit dp)    "<Return>" #'p-in-func)
         (bind culc "<ButtonRelease-1>" #'culc-Presse #+nil "<Return>"))
-;;;;
-
 ;;;;      
       (pack frame)
       (pack frame-l  :side :left)
@@ -169,10 +200,3 @@
       *e-box-rez*)))
 
 ;;;; (e-box-demo-2)
-
-#+nil (defun culc-Pressed (event)
-  (declare (ignore event))
-
-  (break "culc-Pressed:") )
-
-

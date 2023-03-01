@@ -58,3 +58,12 @@
 
 (defun cmd-show-wdget(widget)
   (pack widget))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(ql:quickload :idelchik)
+
+(idelchik:k *gas*)
+
+(defparameter *gas* (make-instance 'idelchik:<gas> ))
+
