@@ -1,6 +1,6 @@
 ;;;; ./src/demo.lisp
 
-(defpackage #:enter-box/demo
+(defpackage :enter-box/demo
   (:nicknames "MEB/DEMO")
   (:use #:cl #:ltk #:ltk-mw #:enter-box/core) ; #:mnas-dim-value #:mnas-list
   (:export edit-box
@@ -9,7 +9,7 @@
    "Пакет Enter-Box/Demo представляет виджет для ввода чисел с
  размерностью. Для детального описания см. README.org") )
 
-(in-package #:enter-box/demo)
+(in-package :enter-box/demo)
 
 (defun edit-box (&key (l-edit-text 10.0) (state 2) vtype dimension (label "Значение"))
   "@b(Описание:) edit-box возвращает число с размерностью, 
