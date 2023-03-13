@@ -1,5 +1,5 @@
 ;;;; enter-box.lisp
-(defpackage #:enter-box/core
+(defpackage :enter-box/core
   (:nicknames "MEB/CORE")
   (:use #:cl #:ltk #:ltk-mw)
   (:export <e-box>
@@ -31,7 +31,7 @@
    "Enter-Box представляет виджет для ввода чисел с размерностью.  Для
 детального описания см. README.org") )
 
-(in-package #:enter-box/core)
+(in-package :enter-box/core)
 
 (defgeneric <e-box>-l-edit-changed (e-box  text)
   (:documentation "Реактор изменения содержимого l-edit"))
