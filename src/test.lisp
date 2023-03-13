@@ -67,3 +67,28 @@
 
 (defparameter *gas* (make-instance 'idelchik:<gas> ))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(in-package :ltk)
+
+(defun foo ()
+  (with-ltk ()
+    (let ((dio nil))
+      (let* ((w (make-instance 'toplevel :title "Пример LTK с переключателями"))
+             (rb1 (make-instance 'radio-button :master w :text "Переключатель 1" :value 1 :variable 'dio))
+             (rb2 (make-instance 'radio-button :master w :text "Переключатель 2" :value 2 :variable 'dio))
+             (rb3 (make-instance 'radio-button :master w :text "Переключатель 3" :value 3 :variable 'dio))
+             (bt1 (make-instance 'button       :master w :text "Кнопка")))
+        (labels ((radio-cb (event)
+                   (declare (ignore event))
+                   (break "1001: ~A" dio))
+                 )
+          (bind bt1 "<ButtonRelease-1>" #'radio-cb #+nil "<Return>")
+          
+          (loop :for i :in `(,rb1 ,rb2 ,rb3 ,bt1)
+                :do (pack i)))
+        ))))
+
+(foo)
+(culc-Presse (event)
+             (declare (ignore event))
