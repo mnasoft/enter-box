@@ -59,6 +59,7 @@
 
 (defparameter *e-box-rez* nil)
 
+#+nil
 (defun e-box-demo-2 ()
   (with-ltk ()
     (let* ((rb-variable 1)
@@ -66,9 +67,10 @@
            (frame-l  (make-instance 'frame :master frame   :name "frame-l"))
            (frame-r  (make-instance 'frame :master frame   :name "frame-r"))
            (frame-p  (make-instance 'frame :master frame-l :name "frame-p"))
-           (frame-kμ (make-instance 'frame :master frame-l :name "frame-kμ"))
-           (frame-rb (make-instance 'frame :master frame-l :name "frame-rb"))           
-           (frame-t  (make-instance 'frame :master frame-r :name "frame-t"))
+           (frame-kμ (make-instance 'frame :master frame-l :name "frame-kμ" )) ;; :relief :solid
+           (frame-rb (make-instance 'labelframe :text  "Тип расчета" :master frame-l :name "frame-rb"))          
+           (frame-t  (make-instance 'frame :master frame-r :name "frame-t" :padding 5 :relief :sunken))     
+           ;; :flat :groove :raised :ridge :solid :sunken
            (culc     (make-instance 'button :text "Culc"   :name "culc"))
            (rb-g     (make-instance 'radio-button
                                     :master frame-rb
@@ -173,7 +175,8 @@
         (bind p-in "<FocusOut>" #'dp-func)   (bind (<e-box>-l-edit p-out) "<Return>" #'dp-func)
         (bind dp   "<FocusOut>" #'p-in-func) (bind (<e-box>-l-edit dp)    "<Return>" #'p-in-func)
         (bind culc "<ButtonRelease-1>" #'culc-Presse #+nil "<Return>"))
-;;;;      
+;;;;
+
       (pack frame)
       (pack frame-l  :side :left)
       (pack frame-r  :side :left)
