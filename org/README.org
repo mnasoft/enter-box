@@ -19,15 +19,15 @@
 
 #+CAPTION: Enter-Box в развернутом виде
 #+name: Ris:full
-[[./images/screenshot.png]]
+[[../images/screenshot.png]]
 
 #+CAPTION: Enter-Box в полуразвернутом виде
 #+name: Ris:half
-[[./images/screenshot-02.png]]
+[[../images/screenshot-02.png]]
 
 #+CAPTION: Enter-Box в свернутом виде
 #+name: Ris:half
-[[./images/screenshot-03.png]]
+[[../images/screenshot-03.png]]
 
 
 ** Проект зависит от нижеперечисленных пакетов: [1/4]
